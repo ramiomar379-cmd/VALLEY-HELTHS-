@@ -11,7 +11,7 @@
    تأكد أن مسار الدالة: netlify/functions/content.mjs
 2) في Netlify: Add new site > Import an existing project > اختر المستودع > Deploy.
 3) Site configuration > Environment variables > Add variable:
-      ADMIN_CODE = REX-473
+      ADMIN_CODE = 
 4) Deploys > Trigger deploy (لإعادة النشر بعد إضافة المتغير).
 5) افتح الموقع، اضغط "دخول المسؤولين" في أسفل الصفحة، واكتب الكود.
 
