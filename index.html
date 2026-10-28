@@ -444,6 +444,17 @@
   .toast { position: fixed; bottom: 22px; inset-inline-start: 50%; transform: translateX(50%) translateY(20px); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: var(--radius); opacity: 0; transition: .3s; pointer-events: none; z-index: 300; font-size: .95rem; }
   .toast.show { opacity: 1; transform: translateX(50%) translateY(0); }
 
+  /* Publish confirmation */
+  .dlg { z-index: 260; }
+  .btn-green { background: #1f8a3c; color: #fff; border: 0; cursor: pointer; }
+  .btn-green:hover { background: #17702f; }
+  .btn-green:disabled { opacity: .6; cursor: default; }
+  .codein { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); font: inherit; margin-top: 4px; }
+  .copybox { width: 100%; min-height: 240px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); font: inherit; line-height: 1.9; background: #fff; color: var(--text); resize: vertical; }
+  .float-confirm { position: fixed; bottom: 22px; inset-inline-end: 22px; z-index: 150; background: #1f8a3c; color: #fff; border: 0; padding: 14px 22px; border-radius: 999px; font: inherit; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px #0004; }
+  .float-confirm:hover { background: #17702f; }
+  .float-confirm[hidden] { display: none; }
+
   /* Rules */
   .rules { list-style: none; counter-reset: rule; display: grid; gap: 10px; }
   .rules li { counter-increment: rule; position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; padding-inline-start: 56px; font-size: .97rem; }
@@ -543,7 +554,8 @@
   <div class="ed-top">
     <h2>لوحة التحرير</h2>
     <div class="ed-actions">
-      <span class="status" id="saveStatus">التعديلات تُحفظ تلقائيًا</span>
+      <span class="status" id="saveStatus">لا توجد تعديلات بانتظار النشر</span>
+      <button class="btn-sm btn-green" id="confirmBtn">تأكيد التعديلات</button>
       <button class="btn-sm" id="exportBtn">تنزيل الموقع بالتعديلات</button>
       <button class="btn-sm danger" id="resetBtn">إعادة الضبط</button>
       <button class="btn-sm" id="viewBtn">معاينة الموقع</button>
@@ -555,6 +567,8 @@
     <div id="ed-main"></div>
   </div>
 </div>
+
+<button class="float-confirm" id="floatConfirm" hidden>تأكيد التعديلات</button>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -712,6 +726,7 @@
       if (sec) sec.hidden = hide;
       document.querySelectorAll(`nav.main a[href="#${k}"]`).forEach(a => a.hidden = hide);
     });
+    updateBar();
   }
 
   // ---------- Modals ----------
@@ -840,28 +855,158 @@
   ];
 
   let current = 0;
+  let sectionLabel = "";
   let timer;
-  function touch() {
-    clearTimeout(timer);
-    timer = setTimeout(() => { persist(); renderAll(); }, 700);
+  const CHANGES_KEY = "moh-changes";
+  const DRAFT_KEY = "moh-draft";
+  let changes = [];
+  try { changes = JSON.parse(sessionStorage.getItem(CHANGES_KEY) || "[]"); } catch (e) { changes = []; }
+
+  function lbl(obj, f) {
+    const n = obj.title || obj.name || obj.role || obj.caption || obj.q || obj.num || "";
+    return f.label + (n ? " (" + String(n).slice(0, 40) + ")" : "");
   }
-  function persist() {
-    if (!isHosted) { flash("وضع محلي: التعديلات لا تُنشر. افتح الموقع من Netlify"); return; }
-    $("saveStatus").textContent = "جارٍ الحفظ...";
-    fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-admin-code": sessionStorage.getItem("moh-code") || "" },
-      body: JSON.stringify(D)
-    }).then(r => {
-      if (r.status === 401) throw new Error("401");
-      if (!r.ok) throw new Error("server");
-      $("saveStatus").textContent = "منشور للجميع";
-      flash("تم حفظ التعديلات ونشرها للجميع");
-    }).catch(err => {
-      $("saveStatus").textContent = "فشل الحفظ";
-      flash(err.message === "401" ? "انتهت الجلسة، سجّل الدخول مجددًا" : "تعذر الحفظ، تحقق من الاتصال");
+
+  function saveDraft() {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(D)); } catch (e) {}
+    try { sessionStorage.setItem(CHANGES_KEY, JSON.stringify(changes)); } catch (e) {}
+    updateBar();
+  }
+
+  function touch(label) {
+    const text = (sectionLabel ? sectionLabel + " ← " : "") + (label || "تعديل");
+    const last = changes[changes.length - 1];
+    if (!last || last.text !== text) changes.push({ text });
+    clearTimeout(timer);
+    timer = setTimeout(() => { saveDraft(); renderAll(); }, 250);
+  }
+
+  function updateBar() {
+    const n = changes.length;
+    const label = n ? `تأكيد التعديلات (${n})` : "تأكيد التعديلات";
+    const fl = $("floatConfirm");
+    if (fl) { fl.hidden = !isAdmin(); fl.textContent = label; }
+    const cb = $("confirmBtn");
+    if (cb) cb.textContent = label;
+    const st = $("saveStatus");
+    if (st) st.textContent = n ? `${n} تعديل بانتظار التأكيد والنشر` : "لا توجد تعديلات بانتظار النشر";
+  }
+
+  function dialog({ title, body, ok = "متابعة", cancel = "إلغاء", input = false, validate = null }) {
+    return new Promise(resolve => {
+      const wrap = el("div", "overlay dlg");
+      const card = el("div", "login-card");
+      card.append(el("h3", "", title), el("p", "", body));
+      let field = null;
+      if (input) {
+        field = el("input", "codein");
+        field.type = "password";
+        field.placeholder = "أدخل الكود";
+        field.autocomplete = "off";
+        card.append(field);
+      }
+      const err = el("div", "err");
+      const row = el("div", "btns");
+      row.style.marginTop = "14px";
+      const okB = el("button", "btn btn-green", ok);
+      const noB = el("button", "btn-sm", cancel);
+      row.append(okB, noB);
+      card.append(err, row);
+      wrap.append(card);
+      document.body.append(wrap);
+      const done = v => { wrap.remove(); resolve(v); };
+      okB.onclick = async () => {
+        const value = input ? field.value.trim().toUpperCase() : true;
+        if (validate) {
+          okB.disabled = true;
+          const msg = await validate(value);
+          okB.disabled = false;
+          if (msg) { err.textContent = msg; return; }
+        }
+        done(value);
+      };
+      noB.onclick = () => done(null);
+      wrap.addEventListener("click", e => { if (e.target === wrap) done(null); });
+      if (field) field.addEventListener("keydown", e => { if (e.key === "Enter") okB.click(); });
+      (field || okB).focus();
     });
   }
+
+  async function checkCode(code) {
+    try {
+      const r = await fetch(API + "?check=1", { headers: { "x-admin-code": code } });
+      if (r.ok) { sessionStorage.setItem("moh-code", code); return null; }
+      return "الكود غير صحيح، حاول مرة أخرى";
+    } catch (e) {
+      return "تعذر الاتصال بالخادم";
+    }
+  }
+
+  async function publishAll() {
+    const code = sessionStorage.getItem("moh-code") || "";
+    const r = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-code": code },
+      body: JSON.stringify(D)
+    });
+    if (!r.ok) throw new Error(String(r.status));
+  }
+
+  function showSuccess(list) {
+    const text = "تم تحديث موقع وزارة الصحة في مدينة فالي، وهذي هي جميع التعديلات:\n\n" +
+      list.map((c, i) => `${i + 1}. ${c.text}`).join("\n");
+    const wrap = el("div", "overlay dlg");
+    const card = el("div", "login-card");
+    card.style.width = "min(560px, 100%)";
+    card.append(el("h3", "", "تهنينا! تم تحديث الموقع"), el("p", "", "يمكنك نسخ الرسالة التالية وإرسالها:"));
+    const ta = el("textarea", "copybox");
+    ta.value = text;
+    ta.readOnly = true;
+    const row = el("div", "btns");
+    row.style.marginTop = "14px";
+    const copy = el("button", "btn btn-green", "نسخ الرسالة");
+    const close = el("button", "btn-sm", "إغلاق");
+    copy.onclick = async () => {
+      try { await navigator.clipboard.writeText(text); }
+      catch (e) { ta.select(); document.execCommand("copy"); }
+      flash("تم نسخ الرسالة");
+    };
+    close.onclick = () => wrap.remove();
+    wrap.addEventListener("click", e => { if (e.target === wrap) wrap.remove(); });
+    row.append(copy, close);
+    card.append(ta, row);
+    wrap.append(card);
+    document.body.append(wrap);
+  }
+
+  async function confirmFlow() {
+    if (!isAdmin()) { openLogin(); return; }
+    if (!isHosted) { flash("النشر يعمل بعد رفع الموقع على Netlify"); return; }
+    if (!changes.length) { flash("لا توجد تعديلات جديدة لنشرها"); return; }
+    const n = changes.length;
+    const first = await dialog({ title: "تأكيد التعديلات", body: `لديك ${n} تعديل جاهز للنشر. هل تريد المراجعة والمتابعة؟`, ok: "نعم، متابعة" });
+    if (!first) return;
+    const second = await dialog({ title: "تأكيد نهائي", body: "بعد النشر ستظهر هذه التعديلات لجميع الزوار. هل أنت متأكد؟", ok: "نعم، أنا متأكد" });
+    if (!second) return;
+    const code = await dialog({ title: "رمز التحقق", body: "أدخل الكود لإتمام النشر.", ok: "نشر", input: true, validate: checkCode });
+    if (!code) return;
+    const list = changes.slice();
+    try {
+      await publishAll();
+    } catch (e) {
+      flash("تعذر النشر، تحقق من الاتصال وحاول مرة أخرى");
+      return;
+    }
+    changes = [];
+    sessionStorage.removeItem(CHANGES_KEY);
+    localStorage.removeItem(DRAFT_KEY);
+    updateBar();
+    showSuccess(list);
+  }
+
+  $("confirmBtn").onclick = confirmFlow;
+  $("floatConfirm").onclick = confirmFlow;
+
   function flash(msg) {
     const t = $("toast");
     t.textContent = msg; t.classList.add("show");
@@ -902,7 +1047,7 @@
     if (f.type === "bool") {
       const lab = el("label", "chk");
       const cb = el("input"); cb.type = "checkbox"; cb.checked = !!obj[f.k];
-      cb.onchange = () => { obj[f.k] = cb.checked; touch(); };
+      cb.onchange = () => { obj[f.k] = cb.checked; touch(lbl(obj, f)); };
       lab.append(cb, document.createTextNode(f.label));
       wrap.append(lab);
       return wrap;
@@ -936,15 +1081,15 @@
         img.src = v;
       };
       preview();
-      url.oninput = () => { obj[f.k] = url.value.trim(); preview(); touch(); };
+      url.oninput = () => { obj[f.k] = url.value.trim(); preview(); touch(lbl(obj, f)); };
       file.onchange = () => {
         const x = file.files[0];
         if (!x) return;
         compressImage(x).then(d => {
-          obj[f.k] = d; url.value = ""; preview(); touch(); flash("تم رفع الصورة");
+          obj[f.k] = d; url.value = ""; preview(); touch(lbl(obj, f)); flash("تم رفع الصورة");
         }).catch(() => flash("تعذر قراءة الصورة"));
       };
-      rm.onclick = () => { obj[f.k] = ""; url.value = ""; preview(); touch(); };
+      rm.onclick = () => { obj[f.k] = ""; url.value = ""; preview(); touch(lbl(obj, f)); };
       wrap.append(box);
       return wrap;
     }
@@ -959,27 +1104,27 @@
       ctl = el("input"); ctl.type = f.type === "date" ? "date" : "text";
     }
     ctl.value = obj[f.k] ?? "";
-    ctl.oninput = ctl.onchange = () => { obj[f.k] = ctl.value; touch(); };
+    ctl.oninput = ctl.onchange = () => { obj[f.k] = ctl.value; touch(lbl(obj, f)); };
     wrap.append(ctl);
     return wrap;
   }
 
   function listEl(arr, fields, rerender, itemLabel) {
     const wrap = el("div", "list");
-    const change = () => { touch(); rerender(); };
+    const change = (d) => { touch(d); rerender(); };
     arr.forEach((item, i) => {
       const card = el("div", "lcard");
       const headEl = el("div", "lhead");
       headEl.append(el("span", "", `${itemLabel || "عنصر"} ${i + 1}`));
       const acts = el("div", "acts");
       const up = el("button", "", "↑"); up.title = "تحريك للأعلى"; up.disabled = i === 0;
-      up.onclick = () => { [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; change(); };
+      up.onclick = () => { [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; change(`تحريك ${itemLabel || "عنصر"} ${i + 1}`); };
       const down = el("button", "", "↓"); down.title = "تحريك للأسفل"; down.disabled = i === arr.length - 1;
-      down.onclick = () => { [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; change(); };
+      down.onclick = () => { [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; change(`تحريك ${itemLabel || "عنصر"} ${i + 1}`); };
       const del = el("button", "del", "🗑"); del.title = "حذف";
-      del.onclick = () => { if (confirm("هل تريد حذف هذا العنصر؟")) { arr.splice(i, 1); change(); } };
+      del.onclick = () => { if (confirm("هل تريد حذف هذا العنصر؟")) { arr.splice(i, 1); change(`حذف ${itemLabel || "عنصر"} ${i + 1}`); } };
       const dup = el("button", "", "⧉"); dup.title = "نسخ";
-      dup.onclick = () => { arr.splice(i + 1, 0, JSON.parse(JSON.stringify(item))); change(); };
+      dup.onclick = () => { arr.splice(i + 1, 0, JSON.parse(JSON.stringify(item))); change(`نسخ ${itemLabel || "عنصر"} ${i + 1}`); };
       acts.append(up, down, dup, del);
       headEl.append(acts);
       card.append(headEl);
@@ -988,7 +1133,7 @@
     });
     const add = el("button", "add-btn", "+ إضافة " + (itemLabel || "عنصر"));
     add.type = "button";
-    add.onclick = () => { arr.push(blankItem(fields)); change(); };
+    add.onclick = () => { arr.push(blankItem(fields)); change(`إضافة ${itemLabel || "عنصر"} جديد`); };
     wrap.append(add);
     return wrap;
   }
@@ -996,6 +1141,7 @@
   function showSection(i) {
     current = i;
     const s = SCHEMA[i];
+    sectionLabel = s.label;
     document.querySelectorAll("#ed-nav button").forEach((b, j) => b.classList.toggle("on", j === i));
     const m = $("ed-main");
     m.innerHTML = "";
@@ -1074,10 +1220,10 @@
   $("resetBtn").onclick = () => {
     if (!confirm("سيتم حذف جميع التعديلات والعودة إلى المحتوى الأصلي. متابعة؟")) return;
     D = JSON.parse(JSON.stringify(EMBED));
-    persist();
+    touch("إعادة ضبط كاملة للموقع");
     renderAll();
     showSection(current);
-    flash("تمت إعادة الضبط");
+    flash("تمت إعادة الضبط، اضغط تأكيد التعديلات لنشرها");
   };
 
   $("menuBtn").onclick = () => {
@@ -1092,7 +1238,9 @@
   renderAll();
   if (isHosted) {
     fetch(API).then(r => (r.ok ? r.json() : null)).then(remote => {
-      if (remote && remote.site) { D = remote; renderAll(); }
+      if (remote && remote.site) D = remote;
+      if (isAdmin()) { try { const dft = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); if (dft && dft.site) D = dft; } catch (e) {} }
+      renderAll();
     }).catch(() => {});
   }
 })();
