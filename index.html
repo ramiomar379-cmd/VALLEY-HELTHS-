@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400..700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Default content. The editor saves changes in the browser; "تنزيل الموقع" bakes them into this block. -->
+<!-- Default content: edited by the admin editor and published via the server. -->
 <script id="site-data" type="application/json">
 {
   "site": {
@@ -214,7 +214,6 @@
   }
 }
 </script>
-
 <style>
   :root {
     --ink: #0d3a31;
@@ -485,25 +484,60 @@
     .hero .wrap > *:nth-child(4) { animation-delay: .24s; }
     @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
   }
+  /* Multi-page layout */
+  .phead { background: var(--ink); color: #fff; padding: 56px 0 50px; border-bottom: 2px solid var(--gold); }
+  .phead h1 { color: #fff; font-size: clamp(2rem, 4.5vw, 3.2rem); margin: 10px 0 12px; }
+  .phead p { color: #d7e6e1; max-width: 70ch; }
+  .crumbs { display: flex; gap: 8px; font-size: .9rem; color: #bcd0c9; flex-wrap: wrap; }
+  .crumbs a { color: #e3c57f; text-decoration: none; }
+  .crumbs span:last-child { color: #fff; }
+  nav.main a.on { background: #ffffff22; opacity: 1; }
+  .page { animation: fadeIn .45s ease both; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .block { padding: 64px 0; }
+  .block + .block { border-top: 1px solid var(--line); }
+  .home-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; padding: 72px 0 0; }
+  .pcard { position: relative; display: block; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; text-decoration: none; transition: transform .2s, border-color .2s; }
+  .pcard:hover { transform: translateY(-3px); border-color: var(--gold); }
+  .pcard .pnum { font-family: "Reem Kufi", sans-serif; color: var(--gold); font-weight: 700; }
+  .pcard h3 { font-size: 1.3rem; margin: 6px 0 8px; }
+  .pcard p { color: var(--muted); font-size: .95rem; }
+  .pcard .parrow { display: inline-block; margin-top: 12px; color: var(--ink-2); font-weight: 600; }
+  .about-body { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .about-text p { font-size: 1.05rem; }
+  .pager { display: block; background: var(--paper); border-top: 1px solid var(--line); }
+  .pgrid { display: flex; justify-content: space-between; gap: 16px; padding: 40px 0 64px; }
+  .pg { flex: 1; max-width: 420px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 22px; text-decoration: none; }
+  .pg:hover { border-color: var(--gold); }
+  .pg small { display: block; color: var(--muted); }
+  .pg b { font-family: "Reem Kufi", sans-serif; color: var(--ink); font-size: 1.1rem; }
+  .sec-tools { margin-bottom: 18px; }
+  .sec-tools .btn-sm { text-decoration: none; display: inline-block; }
+  .btn-sm.ghost { background: transparent; color: #fff; border-color: #ffffff55; }
+  .btn-sm:disabled { opacity: .4; cursor: default; }
+  @media (max-width: 920px) { .about-body { grid-template-columns: 1fr; } .home-cards { padding-top: 48px; } }
+  /* Custom content blocks and section manager */
+  .blk { margin-bottom: 36px; }
+  .blk h3 { font-size: 1.35rem; margin-bottom: 10px; padding-inline-start: 14px; border-inline-start: 3px solid var(--gold); }
+  .blk p { font-size: 1.05rem; color: var(--text); }
+  .blk-list { list-style: none; display: grid; gap: 10px; }
+  .blk-list li { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; padding-inline-start: 36px; }
+  .blk-list li::before { content: ""; position: absolute; inset-inline-start: 14px; top: 1.1em; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .blk-img { margin-bottom: 36px; }
+  .blk-img .media { aspect-ratio: 16 / 9; }
+  .blk-img figcaption { margin-top: 10px; color: var(--muted); font-size: .95rem; }
+  .hint { color: var(--muted); font-size: .92rem; margin-bottom: 18px; }
+  .navrow .lhead span { font-weight: 700; }
 </style>
 </head>
 <body>
-
 <div id="announce" class="announce" hidden></div>
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" id="brand" href="#top"></a>
+    <a class="brand" id="brand" href="#/"></a>
     <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mainnav">القائمة</button>
-    <nav class="main" id="mainnav">
-      <a href="#about">عن الوزارة</a>
-      <a href="#ranks">الرتب والملابس</a>
-      <a href="#battalions">الكتائب</a>
-      <a href="#departments">الأقسام</a>
-      <a href="#leadership">القيادات</a>
-      <a href="#rules">القوانين</a>
-      <a href="#faq">الأسئلة الشائعة</a>
-    </nav>
+    <nav class="main" id="mainnav"></nav>
     <div class="btns">
       <a class="btn btn-ghost" id="hdr-discord1" href="#" target="_blank" rel="noopener">أنضم إلى فالي</a>
       <a class="btn btn-gold" id="hdr-discord2" href="#" target="_blank" rel="noopener">إلى وزارة الصحة</a>
@@ -512,54 +546,73 @@
   </div>
 </header>
 
-<main id="top">
-  <div class="hero" id="r-hero"></div>
-  <div class="stats" id="r-stats"></div>
-  <section id="about"><div class="wrap" id="r-about"></div></section>
-  <section id="ranks"><div class="wrap" id="r-ranks"></div></section>
-  <section id="battalions"><div class="wrap" id="r-battalions"></div></section>
-  <section id="departments"><div class="wrap" id="r-departments"></div></section>
-  <section id="leadership"><div class="wrap" id="r-leaders"></div></section>
-  <section id="rules"><div class="wrap" id="r-rules"></div></section>
-  <div class="cta" id="r-cta"></div>
-  <section id="faq"><div class="wrap faq" id="r-faq"></div></section>
+<main>
+  <div class="page" data-page="home" id="page-home">
+    <div class="hero" id="r-hero"></div>
+    <div class="stats" id="r-stats"></div>
+    <section class="wrap"><div class="home-cards" id="r-cards"></div></section>
+    <section class="block" id="sec-faq"><div class="wrap faq" id="r-faq"></div></section>
+    <div class="cta" id="r-cta"></div>
+  </div>
+
+  <div class="page" data-page="about" id="page-about" hidden>
+    <div class="phead" id="h-about"></div>
+    <section class="block"><div class="wrap" id="r-about"></div></section>
+    <section class="block" id="sec-departments"><div class="wrap" id="r-departments"></div></section>
+    <section class="block" id="sec-leaders"><div class="wrap" id="r-leaders"></div></section>
+  </div>
+
+  <div class="page" data-page="ranks" id="page-ranks" hidden>
+    <div class="phead" id="h-ranks"></div>
+    <section class="block"><div class="wrap" id="r-ranks"></div></section>
+  </div>
+
+  <div class="page" data-page="battalions" id="page-battalions" hidden>
+    <div class="phead" id="h-battalions"></div>
+    <section class="block"><div class="wrap" id="r-battalions"></div></section>
+  </div>
+
+  <div class="page" data-page="rules" id="page-rules" hidden>
+    <div class="phead" id="h-rules"></div>
+    <section class="block"><div class="wrap" id="r-rules"></div></section>
+  </div>
+
+  <div id="dyn-pages"></div>
+
+  <nav class="pager" id="pager" hidden></nav>
 </main>
 
 <footer id="r-footer"></footer>
 
-<!-- Lightbox -->
 <div class="overlay" id="lightbox" hidden role="dialog" aria-modal="true">
   <button class="x-btn" id="lb-close" aria-label="إغلاق">×</button>
   <img class="lb-img" id="lb-img" src="" alt="">
 </div>
 
-<!-- Admin login -->
 <div class="overlay" id="login" hidden role="dialog" aria-modal="true" aria-labelledby="login-title">
   <div class="login-card">
     <h3 id="login-title">دخول المسؤولين</h3>
     <p>أدخل الكود الخاص لفتح لوحة التحرير.</p>
-    <div class="fld" style="margin:0">
-      <input type="text" id="code" placeholder="أدخل الكود" autocomplete="off" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:4px;font:inherit">
-    </div>
+    <input class="codein" type="password" id="code" placeholder="أدخل الكود" autocomplete="off">
     <div class="err" id="loginErr"></div>
     <div class="btns" style="margin-top:14px">
-      <button class="btn btn-dark" id="loginGo">دخول</button>
+      <button class="btn btn-green" id="loginGo">دخول</button>
       <button class="btn-sm" id="loginCancel">إلغاء</button>
     </div>
   </div>
 </div>
 
-<!-- Editor -->
 <div id="editor" hidden role="dialog" aria-modal="true" aria-label="لوحة التحرير">
   <div class="ed-top">
     <h2>لوحة التحرير</h2>
     <div class="ed-actions">
       <span class="status" id="saveStatus">لا توجد تعديلات بانتظار النشر</span>
+      <button class="btn-sm ghost" id="undoBtn" disabled>تراجع (Ctrl+Z)</button>
       <button class="btn-sm btn-green" id="confirmBtn">تأكيد التعديلات</button>
-      <button class="btn-sm" id="exportBtn">تنزيل الموقع بالتعديلات</button>
+      <button class="btn-sm" id="exportBtn">تنزيل نسخة احتياطية</button>
       <button class="btn-sm danger" id="resetBtn">إعادة الضبط</button>
-      <button class="btn-sm" id="viewBtn">معاينة الموقع</button>
-      <button class="btn-sm" id="logoutBtn">خروج</button>
+      <button class="btn-sm ghost" id="viewBtn">إغلاق والعودة للموقع</button>
+      <button class="btn-sm ghost" id="logoutBtn">خروج</button>
     </div>
   </div>
   <div class="ed-body">
@@ -569,21 +622,46 @@
 </div>
 
 <button class="float-confirm" id="floatConfirm" hidden>تأكيد التعديلات</button>
-
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 
 <script>
 (() => {
   const API = "/.netlify/functions/content";
   const isHosted = location.protocol.startsWith("http");
-  const EMBED = JSON.parse(document.getElementById("site-data").textContent);
-  let D = JSON.parse(JSON.stringify(EMBED));
+  const CHANGES_KEY = "moh-changes";
+  const DRAFT_KEY = "moh-draft";
+  const BUILTIN = { about: "عام وزارة الصحة", ranks: "الرتب والملابس", battalions: "الكتائب", rules: "القوانين" };
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const lines = s => String(s ?? "").split("\n").map(x => x.trim()).filter(Boolean);
+  const clone = o => JSON.parse(JSON.stringify(o));
   const isAdmin = () => sessionStorage.getItem("moh-admin") === "1";
   const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
+
+  // Fill in anything missing from older saved content so every version loads cleanly
+  function normalize(x) {
+    const d = clone(x);
+    d.visible = d.visible || {};
+    if (!Array.isArray(d.nav)) {
+      d.nav = Object.keys(BUILTIN).map(id => ({ id, label: BUILTIN[id], visible: d.visible[id] !== false }));
+    }
+    if (!Array.isArray(d.pages)) d.pages = [];
+    d.pages.forEach(p => { p.blocks = Array.isArray(p.blocks) ? p.blocks : []; });
+    return d;
+  }
+
+  const EMBED = normalize(JSON.parse(document.getElementById("site-data").textContent));
+  let D = clone(EMBED);
+  let currentKey = "site";
+  let sectionLabel = "";
+  let timer;
+  let changes = [];
+  let history = [];
+  let pendingBase = null;
+  let lastState = JSON.stringify(D);
+  try { changes = JSON.parse(sessionStorage.getItem(CHANGES_KEY) || "[]"); } catch (e) { changes = []; }
 
   const hijri = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", { year: "numeric", month: "long", day: "numeric" });
   const greg = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", { year: "numeric", month: "long", day: "numeric" });
@@ -593,16 +671,79 @@
     return `${hijri.format(d)} هـ | ${greg.format(d)} م`;
   }
 
-  function imgOrEmpty(src, alt) {
-    return src
-      ? `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.parentNode.classList.add('broken')">`
-      : "";
-  }
+  const imgOrEmpty = (src, alt) => src ? `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.parentNode.classList.add('broken')">` : "";
   const zoomAttr = src => src ? `data-zoom-src="${esc(src)}" role="button" tabindex="0"` : "";
-  function logoHTML(cls) {
-    return `<span class="logo ${cls}"><img src="${esc(D.site.logo)}" alt="شعار الوزارة" onerror="this.parentNode.classList.add('nologo')"><span class="fb">و</span></span>`;
+  const logoHTML = cls => `<span class="logo ${cls}"><img src="${esc(D.site.logo)}" alt="شعار الوزارة" onerror="this.parentNode.classList.add('nologo')"><span class="fb">و</span></span>`;
+  const secHead = (t, d) => `<div class="sec-head"><h2>${esc(t)}</h2>${d ? `<p>${esc(d)}</p>` : ""}</div>`;
+  const phead = (title, desc) => `<div class="wrap"><nav class="crumbs"><a href="#/">الرئيسية</a><span>/</span><span>${esc(title)}</span></nav><h1>${esc(title)}</h1>${desc ? `<p>${esc(desc)}</p>` : ""}</div>`;
+
+  // ---------- Pages and sections ----------
+  const navItem = id => D.nav.find(n => n.id === id);
+  const customPage = id => D.pages.find(p => p.id === id);
+  const isCustom = id => !!customPage(id);
+  const isNavVisible = id => { const n = navItem(id); return !!n && n.visible !== false; };
+  const isSubVisible = k => !(D.visible && D.visible[k] === false);
+
+  function pageTitle(id) {
+    if (BUILTIN[id]) return D[id].title;
+    const p = customPage(id);
+    return p ? p.title : id;
   }
-  const head = (t, d) => `<div class="sec-head"><h2>${esc(t)}</h2>${d ? `<p>${esc(d)}</p>` : ""}</div>`;
+  function pageDesc(id) {
+    const map = { about: D.about.p1, ranks: D.ranks.desc, battalions: D.battalions.desc, rules: D.rules.intro };
+    if (map[id] !== undefined) return map[id];
+    const p = customPage(id);
+    return p ? (p.desc || "") : "";
+  }
+  function uniqueId(name) {
+    let slug = String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    if (!slug || BUILTIN[slug] || navItem(slug) || customPage(slug)) slug = "sec-" + Date.now().toString(36);
+    return slug;
+  }
+  function currentRoute() {
+    const h = location.hash.replace(/^#\/?/, "").trim();
+    return navItem(h) ? h : "home";
+  }
+
+  function renderBlock(b) {
+    const title = b.title ? `<h3>${esc(b.title)}</h3>` : "";
+    if (b.type === "image") {
+      return `<figure class="blk-img">${title}<div class="media ${b.image ? "" : "empty"}" ${zoomAttr(b.image)}>${imgOrEmpty(b.image, b.caption)}</div>${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+    }
+    if (b.type === "bullets") {
+      return `<div class="blk">${title}<ul class="blk-list">${lines(b.points).map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>`;
+    }
+    if (b.type === "numbered") {
+      return `<div class="blk">${title}<ol class="rules">${lines(b.points).map(p => `<li>${esc(p)}</li>`).join("")}</ol></div>`;
+    }
+    return `<div class="blk">${title}${b.text ? `<p>${esc(b.text)}</p>` : ""}</div>`;
+  }
+
+  function renderPager(r) {
+    const pager = $("pager");
+    if (r === "home") { pager.hidden = true; pager.innerHTML = ""; return; }
+    const list = D.nav.filter(n => n.visible !== false).map(n => n.id);
+    const i = list.indexOf(r);
+    const prev = list[i - 1], next = list[i + 1];
+    pager.hidden = false;
+    pager.innerHTML = `<div class="wrap pgrid">
+      ${prev ? `<a class="pg" href="#/${esc(prev)}"><small>الصفحة السابقة</small><b>${esc(pageTitle(prev))}</b></a>` : "<span></span>"}
+      ${next ? `<a class="pg next" href="#/${esc(next)}"><small>الصفحة التالية</small><b>${esc(pageTitle(next))}</b></a>` : "<span></span>"}
+    </div>`;
+  }
+
+  function applyRoute(scroll = true) {
+    let r = currentRoute();
+    if (r !== "home" && !isNavVisible(r)) r = "home";
+    document.querySelectorAll(".page").forEach(p => { p.hidden = p.dataset.page !== r; });
+    document.querySelectorAll("nav.main a[data-route]").forEach(a => {
+      a.classList.toggle("on", a.dataset.route === r);
+      a.hidden = a.dataset.route !== "home" && !isNavVisible(a.dataset.route);
+    });
+    document.title = r === "home" ? `${D.site.title} | ${D.site.subtitle}` : `${pageTitle(r)} | ${D.site.title}`;
+    renderPager(r);
+    if (scroll) window.scrollTo(0, 0);
+  }
 
   function renderAll() {
     const S = D.site, A = D.announce, admin = isAdmin();
@@ -617,8 +758,10 @@
     $("hdr-discord1").href = S.discord;
     $("hdr-discord2").href = S.discord;
     $("hdr-admin").hidden = !admin;
-    document.title = `${S.title} | ${S.subtitle}`;
     document.querySelector('link[rel="icon"]').href = S.logo;
+
+    $("mainnav").innerHTML = `<a href="#/" data-route="home">الرئيسية</a>` +
+      D.nav.map(n => `<a href="#/${esc(n.id)}" data-route="${esc(n.id)}">${esc(n.label)}</a>`).join("");
 
     const H = D.hero;
     $("r-hero").innerHTML = `<div class="wrap">
@@ -627,22 +770,48 @@
       <p class="lead">${esc(H.lead)}</p>
       <div class="btns">
         <a class="btn btn-gold" href="${esc(S.discord)}" target="_blank" rel="noopener">${esc(H.btn1)}</a>
-        <a class="btn btn-ghost" href="#ranks">${esc(H.btn2)}</a>
+        <a class="btn btn-ghost" href="#/ranks">${esc(H.btn2)}</a>
       </div></div>`;
 
     $("r-stats").innerHTML = `<div class="wrap">` + D.stats.map(s =>
       `<div class="stat"><strong>${esc(s.num)}</strong><span>${esc(s.label)}</span></div>`).join("") + `</div>`;
 
-    const A2 = D.about;
-    $("r-about").innerHTML = `<div class="about">
-      <div><h2>${esc(A2.title)}</h2><p>${esc(A2.p1)}</p><p>${esc(A2.p2)}</p></div>
-      <div class="principles">${A2.principles.map(p =>
-        `<div class="principle"><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></div>`).join("")}</div>
-    </div>`;
+    $("r-cards").innerHTML = D.nav.filter(n => n.visible !== false).map((n, i) => `
+      <a class="pcard" href="#/${esc(n.id)}">
+        <span class="pnum">${String(i + 1).padStart(2, "0")}</span>
+        <h3>${esc(pageTitle(n.id))}</h3>
+        <p>${esc(pageDesc(n.id))}</p>
+        <span class="parrow">افتح الصفحة ←</span>
+      </a>`).join("");
 
-    const R = D.ranks;
-    $("r-ranks").innerHTML = head(R.title, R.desc) +
-      `<div class="ladder">${R.items.map(it => `
+    $("h-about").innerHTML = phead(D.about.title, D.about.p1);
+    $("r-about").innerHTML = `<div class="about-body">
+      <div class="principles">${D.about.principles.map(p =>
+        `<div class="principle"><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></div>`).join("")}</div>
+      <div class="about-text"><p>${esc(D.about.p2)}</p></div></div>`;
+
+    const DP = D.departments;
+    $("r-departments").innerHTML = secHead(DP.title, DP.desc) + `<div class="depts">${DP.items.map(d => `
+      <article class="dept">
+        <h3>${esc(d.title)}</h3>
+        <p>${esc(d.desc)}</p>
+        <ul>${lines(d.points).map(p => `<li>${esc(p)}</li>`).join("")}</ul>
+      </article>`).join("")}</div>`;
+
+    const L = D.leaders;
+    $("r-leaders").innerHTML = secHead(L.title, L.desc) + `<div class="leaders">${L.items.map(l => `
+      <article class="leader ${l.top ? "top" : ""}">
+        <div class="seal">${esc(String(l.role || "").charAt(0))}</div>
+        <div>
+          <div class="role">${esc(l.role)}</div>
+          <h3>${esc(l.name)}</h3>
+          <div class="meta">${l.handle ? esc(l.handle) + " · " : ""}الرقم: <span class="ltr">${esc(l.id)}</span></div>
+          <time>${dateLine(l.date)}</time>
+        </div>
+      </article>`).join("")}</div>`;
+
+    $("h-ranks").innerHTML = phead(D.ranks.title, D.ranks.desc);
+    $("r-ranks").innerHTML = `<div class="ladder">${D.ranks.items.map(it => `
         <article class="rank">
           <div class="media rank-media ${it.image ? "" : "empty"}" ${zoomAttr(it.image)}>${imgOrEmpty(it.image, it.title)}</div>
           <div class="rank-body"><div class="tier">${esc(it.tier)}</div><h3>${esc(it.title)}</h3><p>${esc(it.desc)}</p></div>
@@ -658,9 +827,8 @@
             </figure>`).join("")}</div>
         </div>`).join("");
 
-    const B = D.battalions;
-    $("r-battalions").innerHTML = head(B.title, B.desc) +
-      `<div class="battalions">${B.items.map((b, i) => `
+    $("h-battalions").innerHTML = phead(D.battalions.title, D.battalions.desc);
+    $("r-battalions").innerHTML = `<div class="battalions">${D.battalions.items.map((b, i) => `
         <article class="bat ${i === 0 ? "featured" : ""} ${b.soon ? "soon" : ""}">
           <div class="bat-top"><h3>${esc(b.name)}</h3>${b.code ? `<span class="code">${esc(b.code)}</span>` : ""}</div>
           <p>${esc(b.desc)}</p>
@@ -669,27 +837,22 @@
             : `<b>القائد:</b> ${esc(b.cmdName)}${b.cmdId ? ` · صاحب الأيدي: <span class="ltr">${esc(b.cmdId)}</span>` : ""}`}</div>
         </article>`).join("")}</div>`;
 
-    const DP = D.departments;
-    $("r-departments").innerHTML = head(DP.title, DP.desc) +
-      `<div class="depts">${DP.items.map(d => `
-        <article class="dept">
-          <h3>${esc(d.title)}</h3>
-          <p>${esc(d.desc)}</p>
-          <ul>${lines(d.points).map(p => `<li>${esc(p)}</li>`).join("")}</ul>
-        </article>`).join("")}</div>`;
+    $("h-rules").innerHTML = phead(D.rules.title, D.rules.intro);
+    $("r-rules").innerHTML = (D.rules.items || []).map(g => `
+      <div class="ugroup">
+        <h3>${esc(g.title)}</h3>
+        ${g.note ? `<p class="rnote">${esc(g.note)}</p>` : ""}
+        <ol class="rules">${(g.rules || []).map(r => `<li>${esc(r.text)}</li>`).join("")}</ol>
+      </div>`).join("");
 
-    const L = D.leaders;
-    $("r-leaders").innerHTML = head(L.title, L.desc) +
-      `<div class="leaders">${L.items.map(l => `
-        <article class="leader ${l.top ? "top" : ""}">
-          <div class="seal">${esc(String(l.role || "").charAt(0))}</div>
-          <div>
-            <div class="role">${esc(l.role)}</div>
-            <h3>${esc(l.name)}</h3>
-            <div class="meta">${l.handle ? esc(l.handle) + " · " : ""}الرقم: <span class="ltr">${esc(l.id)}</span></div>
-            <time>${dateLine(l.date)}</time>
-          </div>
-        </article>`).join("")}</div>`;
+    $("dyn-pages").innerHTML = D.pages.map(p => `
+      <div class="page" data-page="${esc(p.id)}" hidden>
+        <div class="phead">${phead(p.title, p.desc)}</div>
+        <section class="block"><div class="wrap">${(p.blocks || []).map(renderBlock).join("")}</div></section>
+      </div>`).join("");
+
+    $("r-faq").innerHTML = secHead(D.faq.title) + D.faq.items.map(q =>
+      `<details><summary>${esc(q.q)}</summary><p>${esc(q.a)}</p></details>`).join("");
 
     const C = D.cta;
     $("r-cta").innerHTML = `<div class="wrap">
@@ -697,188 +860,23 @@
       <a class="btn btn-dark" href="${esc(S.discord)}" target="_blank" rel="noopener">${esc(C.btn)}</a>
     </div>`;
 
-    const RU = D.rules;
-    $("r-rules").innerHTML = head(RU.title, RU.intro) + RU.items.map(g => `
-      <div class="ugroup">
-        <h3>${esc(g.title)}</h3>
-        ${g.note ? `<p class="rnote">${esc(g.note)}</p>` : ""}
-        <ol class="rules">${(g.rules || []).map(r => `<li>${esc(r.text)}</li>`).join("")}</ol>
-      </div>`).join("");
-
-    $("r-faq").innerHTML = head(D.faq.title) + D.faq.items.map(q =>
-      `<details><summary>${esc(q.q)}</summary><p>${esc(q.a)}</p></details>`).join("");
-
+    const footLinks = D.nav.filter(n => n.visible !== false).map(n => `<a href="#/${esc(n.id)}">${esc(n.label)}</a>`).join("");
     $("r-footer").innerHTML = `<div class="wrap"><div class="cols">
       <div>${logoHTML("foot-logo")}<h4>${esc(S.title)} | ${esc(S.subtitle)}</h4><p>${esc(D.footer.about)}</p></div>
-      <div><h4>روابط</h4>
-        <a href="#about">عن الوزارة</a><a href="#ranks">الرتب والملابس</a>
-        <a href="#battalions">الكتائب</a><a href="#leadership">القيادات</a></div>
+      <div><h4>الصفحات</h4>${footLinks}</div>
       <div><h4>تواصل معنا</h4>
         <a href="${esc(S.discord)}" target="_blank" rel="noopener">سيرفر ديسكورد</a>
-        <a href="#faq">الأسئلة الشائعة</a>
+        <a href="#/">الرئيسية</a>
         <button class="linkbtn" data-action="login">دخول المسؤولين</button></div>
     </div><div class="legal">${esc(D.footer.legal)}</div></div>`;
 
-    const V = D.visible || {};
-    Object.keys(V).forEach(k => {
-      const hide = V[k] === false;
-      const sec = $(k);
-      if (sec) sec.hidden = hide;
-      document.querySelectorAll(`nav.main a[href="#${k}"]`).forEach(a => a.hidden = hide);
-    });
+    const hideSec = (id, k) => { const e = $(id); if (e) e.hidden = !isSubVisible(k); };
+    hideSec("sec-departments", "departments");
+    hideSec("sec-leaders", "leadership");
+    hideSec("sec-faq", "faq");
+
+    applyRoute(false);
     updateBar();
-  }
-
-  // ---------- Modals ----------
-  function openLB(src, alt) {
-    $("lb-img").src = src; $("lb-img").alt = alt || "";
-    $("lightbox").hidden = false; $("lb-close").focus();
-  }
-  function closeLB() { $("lightbox").hidden = true; $("lb-img").src = ""; }
-
-  function openLogin() { $("login").hidden = false; $("code").value = ""; $("loginErr").textContent = ""; $("code").focus(); }
-  function closeLogin() { $("login").hidden = true; }
-  async function tryLogin() {
-    const code = $("code").value.trim().toUpperCase();
-    if (!isHosted) { $("loginErr").textContent = "التحرير يعمل بعد نشر الموقع على Netlify"; return; }
-    try {
-      const r = await fetch(API + "?check=1", { headers: { "x-admin-code": code } });
-      if (!r.ok) { $("loginErr").textContent = "الكود غير صحيح"; return; }
-    } catch (e) {
-      $("loginErr").textContent = "تعذر الاتصال بالخادم";
-      return;
-    }
-    sessionStorage.setItem("moh-admin", "1");
-    sessionStorage.setItem("moh-code", code);
-    closeLogin();
-    renderAll();
-    openEditor();
-  }
-
-  // ---------- Editor ----------
-  const SCHEMA = [
-    { key: "site", label: "الإعدادات العامة", fields: [
-      { k: "logo", label: "شعار الوزارة", type: "image" },
-      { k: "title", label: "اسم الوزارة" },
-      { k: "subtitle", label: "العنوان الفرعي" },
-      { k: "discord", label: "رابط ديسكورد" } ] },
-    { key: "announce", label: "الشريط العلوي (الإعلان)", fields: [
-      { k: "enabled", label: "إظهار الشريط", type: "bool" },
-      { k: "audience", label: "من يراه؟", type: "select", options: [["all", "الجميع"], ["admin", "المشرف فقط (بعد إدخال الكود)"]] },
-      { k: "text", label: "نص الإعلان", type: "textarea" } ] },
-    { key: "hero", label: "الواجهة الرئيسية", fields: [
-      { k: "kicker", label: "العبارة الصغيرة" },
-      { k: "title", label: "العنوان الكبير" },
-      { k: "lead", label: "الوصف", type: "textarea" },
-      { k: "btn1", label: "نص الزر الأول" },
-      { k: "btn2", label: "نص الزر الثاني" } ] },
-    { key: "stats", label: "الإحصائيات", list: true, item: "إحصائية", fields: [
-      { k: "num", label: "الرقم" },
-      { k: "label", label: "الوصف" } ] },
-    { key: "about", label: "عن الوزارة", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "p1", label: "الفقرة الأولى", type: "textarea" },
-      { k: "p2", label: "الفقرة الثانية", type: "textarea" },
-      { k: "principles", type: "list", label: "المبادئ", item: "مبدأ", fields: [
-        { k: "title", label: "العنوان" },
-        { k: "text", label: "الوصف", type: "textarea" } ] } ] },
-    { key: "ranks", label: "الرتب", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "desc", label: "الوصف", type: "textarea" },
-      { k: "items", type: "list", label: "الرتب", item: "رتبة", fields: [
-        { k: "tier", label: "المستوى" },
-        { k: "title", label: "اسم الرتبة" },
-        { k: "desc", label: "الوصف", type: "textarea" },
-        { k: "image", label: "صورة الزي", type: "image" } ] } ] },
-    { key: "uniforms", label: "الملابس", fields: [
-      { k: "groups", type: "list", label: "المجموعات", item: "مجموعة", fields: [
-        { k: "title", label: "عنوان المجموعة" },
-        { k: "desc", label: "الوصف", type: "textarea" },
-        { k: "items", type: "list", label: "الصور", item: "صورة", fields: [
-          { k: "caption", label: "الوصف" },
-          { k: "image", label: "الصورة", type: "image" } ] } ] } ] },
-    { key: "battalions", label: "الكتائب", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "desc", label: "الوصف", type: "textarea" },
-      { k: "items", type: "list", label: "الكتائب", item: "كتيبة", fields: [
-        { k: "name", label: "الاسم" },
-        { k: "code", label: "الرمز (يظهر بجانب الاسم)" },
-        { k: "desc", label: "الوصف", type: "textarea" },
-        { k: "cmdName", label: "اسم القائد" },
-        { k: "cmdId", label: "رقم صاحب الأيدي" },
-        { k: "soon", label: "قريبًا (بدون قائد)", type: "bool" } ] } ] },
-    { key: "departments", label: "الأقسام", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "desc", label: "الوصف", type: "textarea" },
-      { k: "items", type: "list", label: "الأقسام", item: "قسم", fields: [
-        { k: "title", label: "اسم القسم" },
-        { k: "desc", label: "الوصف", type: "textarea" },
-        { k: "points", label: "النقاط (كل سطر نقطة)", type: "textarea" } ] } ] },
-    { key: "leaders", label: "القيادات", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "desc", label: "الوصف", type: "textarea" },
-      { k: "items", type: "list", label: "القيادات", item: "قائد", fields: [
-        { k: "role", label: "المنصب" },
-        { k: "name", label: "الاسم" },
-        { k: "handle", label: "اسم ديسكورد (اختياري)" },
-        { k: "id", label: "الرقم" },
-        { k: "date", label: "تاريخ التعيين", type: "date" },
-        { k: "top", label: "تمييز بالأعلى", type: "bool" } ] } ] },
-    { key: "cta", label: "دعوة الانضمام", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "text", label: "النص", type: "textarea" },
-      { k: "btn", label: "نص الزر" } ] },
-    { key: "faq", label: "الأسئلة الشائعة", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "items", type: "list", label: "الأسئلة", item: "سؤال", fields: [
-        { k: "q", label: "السؤال" },
-        { k: "a", label: "الجواب", type: "textarea" } ] } ] },
-    { key: "rules", label: "القوانين", fields: [
-      { k: "title", label: "العنوان" },
-      { k: "intro", label: "المقدمة", type: "textarea" },
-      { k: "items", type: "list", label: "الأقسام", item: "قسم", fields: [
-        { k: "title", label: "اسم القسم" },
-        { k: "note", label: "ملاحظة تحت العنوان (اختياري)", type: "textarea" },
-        { k: "rules", type: "list", label: "البنود", item: "بند", fields: [
-          { k: "text", label: "نص البند", type: "textarea" } ] } ] } ] },
-    { key: "visible", label: "إظهار وإخفاء الأقسام", fields: [
-      { k: "about", label: "عن الوزارة", type: "bool" },
-      { k: "ranks", label: "الرتب والملابس", type: "bool" },
-      { k: "battalions", label: "الكتائب", type: "bool" },
-      { k: "departments", label: "الأقسام", type: "bool" },
-      { k: "leadership", label: "القيادات", type: "bool" },
-      { k: "rules", label: "القوانين", type: "bool" },
-      { k: "faq", label: "الأسئلة الشائعة", type: "bool" } ] },
-    { key: "footer", label: "التذييل", fields: [
-      { k: "about", label: "وصف مختصر", type: "textarea" },
-      { k: "legal", label: "حقوق النشر" } ] }
-  ];
-
-  let current = 0;
-  let sectionLabel = "";
-  let timer;
-  const CHANGES_KEY = "moh-changes";
-  const DRAFT_KEY = "moh-draft";
-  let changes = [];
-  try { changes = JSON.parse(sessionStorage.getItem(CHANGES_KEY) || "[]"); } catch (e) { changes = []; }
-
-  function lbl(obj, f) {
-    const n = obj.title || obj.name || obj.role || obj.caption || obj.q || obj.num || "";
-    return f.label + (n ? " (" + String(n).slice(0, 40) + ")" : "");
-  }
-
-  function saveDraft() {
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(D)); } catch (e) {}
-    try { sessionStorage.setItem(CHANGES_KEY, JSON.stringify(changes)); } catch (e) {}
-    updateBar();
-  }
-
-  function touch(label) {
-    const text = (sectionLabel ? sectionLabel + " ← " : "") + (label || "تعديل");
-    const last = changes[changes.length - 1];
-    if (!last || last.text !== text) changes.push({ text });
-    clearTimeout(timer);
-    timer = setTimeout(() => { saveDraft(); renderAll(); }, 250);
   }
 
   function updateBar() {
@@ -890,9 +888,59 @@
     if (cb) cb.textContent = label;
     const st = $("saveStatus");
     if (st) st.textContent = n ? `${n} تعديل بانتظار التأكيد والنشر` : "لا توجد تعديلات بانتظار النشر";
+    const ub = $("undoBtn");
+    if (ub) ub.disabled = !(history.length || pendingBase);
   }
 
-  function dialog({ title, body, ok = "متابعة", cancel = "إلغاء", input = false, validate = null }) {
+  function loadDraft() {
+    if (!isAdmin()) return;
+    try {
+      const dft = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+      if (dft && dft.site) D = normalize(dft);
+    } catch (e) {}
+  }
+
+  function lbl(obj, f) {
+    const n = obj.title || obj.name || obj.role || obj.caption || obj.q || obj.num || obj.label || "";
+    return f.label + (n ? " (" + String(n).slice(0, 40) + ")" : "");
+  }
+
+  function touch(label) {
+    if (pendingBase === null) pendingBase = { state: lastState, n: changes.length };
+    const text = (sectionLabel ? sectionLabel + " ← " : "") + (label || "تعديل");
+    const last = changes[changes.length - 1];
+    if (!last || last.text !== text) changes.push({ text });
+    clearTimeout(timer);
+    timer = setTimeout(() => { saveDraft(); renderAll(); }, 250);
+  }
+
+  function saveDraft() {
+    if (pendingBase !== null) {
+      history.push(pendingBase);
+      if (history.length > 50) history.shift();
+      pendingBase = null;
+    }
+    lastState = JSON.stringify(D);
+    try { localStorage.setItem(DRAFT_KEY, lastState); } catch (e) {}
+    try { sessionStorage.setItem(CHANGES_KEY, JSON.stringify(changes)); } catch (e) {}
+    updateBar();
+  }
+
+  function undo() {
+    let entry;
+    if (pendingBase) { entry = pendingBase; pendingBase = null; clearTimeout(timer); }
+    else entry = history.pop();
+    if (!entry) { flash("لا يوجد تعديل للتراجع عنه"); return; }
+    D = normalize(JSON.parse(entry.state));
+    lastState = entry.state;
+    changes.length = entry.n;
+    saveDraft();
+    renderAll();
+    showSection(currentKey);
+    flash("تم التراجع عن آخر تعديل");
+  }
+
+  function dialog({ title, body, ok = "متابعة", cancel = "إلغاء", input = false, inputType = "password", placeholder = "أدخل الكود", validate = null }) {
     return new Promise(resolve => {
       const wrap = el("div", "overlay dlg");
       const card = el("div", "login-card");
@@ -900,8 +948,8 @@
       let field = null;
       if (input) {
         field = el("input", "codein");
-        field.type = "password";
-        field.placeholder = "أدخل الكود";
+        field.type = inputType;
+        field.placeholder = placeholder;
         field.autocomplete = "off";
         card.append(field);
       }
@@ -916,7 +964,8 @@
       document.body.append(wrap);
       const done = v => { wrap.remove(); resolve(v); };
       okB.onclick = async () => {
-        const value = input ? field.value.trim().toUpperCase() : true;
+        const raw = input ? field.value.trim() : "";
+        const value = input ? (inputType === "password" ? raw.toUpperCase() : raw) : true;
         if (validate) {
           okB.disabled = true;
           const msg = await validate(value);
@@ -998,20 +1047,165 @@
       return;
     }
     changes = [];
+    history = [];
+    pendingBase = null;
+    lastState = JSON.stringify(D);
     sessionStorage.removeItem(CHANGES_KEY);
     localStorage.removeItem(DRAFT_KEY);
     updateBar();
     showSuccess(list);
   }
 
-  $("confirmBtn").onclick = confirmFlow;
-  $("floatConfirm").onclick = confirmFlow;
-
   function flash(msg) {
     const t = $("toast");
-    t.textContent = msg; t.classList.add("show");
+    t.textContent = msg;
+    t.classList.add("show");
     clearTimeout(flash.t);
-    flash.t = setTimeout(() => t.classList.remove("show"), 2200);
+    flash.t = setTimeout(() => t.classList.remove("show"), 2400);
+  }
+
+  function openLB(src, alt) {
+    $("lb-img").src = src;
+    $("lb-img").alt = alt || "";
+    $("lightbox").hidden = false;
+    $("lb-close").focus();
+  }
+  function closeLB() { $("lightbox").hidden = true; $("lb-img").src = ""; }
+  function openLogin() { $("login").hidden = false; $("code").value = ""; $("loginErr").textContent = ""; $("code").focus(); }
+  function closeLogin() { $("login").hidden = true; }
+
+  async function tryLogin() {
+    const code = $("code").value.trim().toUpperCase();
+    if (!isHosted) { $("loginErr").textContent = "التحرير يعمل بعد نشر الموقع على Netlify"; return; }
+    const msg = await checkCode(code);
+    if (msg) { $("loginErr").textContent = msg; return; }
+    sessionStorage.setItem("moh-admin", "1");
+    closeLogin();
+    renderAll();
+    openEditor();
+  }
+
+  // ---------- Editor ----------
+  const PAGE_OF = { about: "about", departments: "about", leaders: "about", ranks: "ranks", uniforms: "ranks", battalions: "battalions", rules: "rules" };
+  const pageTarget = key => key.startsWith("custom:") ? key.slice(7) : (PAGE_OF[key] || "home");
+
+  function pageFields() {
+    return [
+      { k: "title", label: "عنوان الصفحة" },
+      { k: "desc", label: "وصف تحت العنوان", type: "textarea" },
+      { k: "blocks", type: "list", label: "محتوى الصفحة", item: "بلوك", fields: [
+        { k: "type", label: "نوع المحتوى", type: "select", options: [["text", "نص"], ["bullets", "قائمة نقاط"], ["numbered", "قائمة مرقمة"], ["image", "صورة"]] },
+        { k: "title", label: "العنوان (اختياري)" },
+        { k: "text", label: "النص (لنوع النص)", type: "textarea" },
+        { k: "points", label: "العناصر (كل سطر عنصر، للقوائم)", type: "textarea" },
+        { k: "image", label: "الصورة (لنوع الصورة)", type: "image" },
+        { k: "caption", label: "وصف الصورة" } ] }
+    ];
+  }
+
+  function schema() {
+    const customs = D.pages.map(p => ({
+      key: "custom:" + p.id,
+      label: "قسم: " + (navItem(p.id) ? navItem(p.id).label : p.title),
+      get: () => customPage(p.id),
+      fields: pageFields(),
+      custom_page: p.id
+    }));
+    return [
+      { key: "site", label: "الإعدادات العامة", fields: [
+        { k: "logo", label: "شعار الوزارة", type: "image" },
+        { k: "title", label: "اسم الوزارة" },
+        { k: "subtitle", label: "العنوان الفرعي" },
+        { k: "discord", label: "رابط ديسكورد" } ] },
+      { key: "announce", label: "الشريط العلوي (الإعلان)", fields: [
+        { k: "enabled", label: "إظهار الشريط", type: "bool" },
+        { k: "audience", label: "من يراه؟", type: "select", options: [["all", "الجميع"], ["admin", "المشرف فقط (بعد إدخال الكود)"]] },
+        { k: "text", label: "نص الإعلان", type: "textarea" } ] },
+      { key: "hero", label: "الصفحة الرئيسية: الواجهة", fields: [
+        { k: "kicker", label: "العبارة الصغيرة" },
+        { k: "title", label: "العنوان الكبير" },
+        { k: "lead", label: "الوصف", type: "textarea" },
+        { k: "btn1", label: "نص الزر الأول" },
+        { k: "btn2", label: "نص الزر الثاني" } ] },
+      { key: "stats", label: "الصفحة الرئيسية: الإحصائيات", list: true, item: "إحصائية", fields: [
+        { k: "num", label: "الرقم" },
+        { k: "label", label: "الوصف" } ] },
+      { key: "pages", label: "الأقسام: الأسماء والترتيب والإظهار", custom: renderNavManager },
+      { key: "about", label: "صفحة: عام وزارة الصحة", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "p1", label: "المقدمة (تظهر في الهيدر وبطاقة الرئيسية)", type: "textarea" },
+        { k: "p2", label: "الفقرة التفصيلية", type: "textarea" },
+        { k: "principles", type: "list", label: "المبادئ", item: "مبدأ", fields: [
+          { k: "title", label: "العنوان" },
+          { k: "text", label: "الوصف", type: "textarea" } ] } ] },
+      { key: "departments", label: "عام الوزارة: الأقسام", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "desc", label: "الوصف", type: "textarea" },
+        { k: "items", type: "list", label: "الأقسام", item: "قسم", fields: [
+          { k: "title", label: "اسم القسم" },
+          { k: "desc", label: "الوصف", type: "textarea" },
+          { k: "points", label: "النقاط (كل سطر نقطة)", type: "textarea" } ] } ] },
+      { key: "leaders", label: "عام الوزارة: القيادات", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "desc", label: "الوصف", type: "textarea" },
+        { k: "items", type: "list", label: "القيادات", item: "قائد", fields: [
+          { k: "role", label: "المنصب" },
+          { k: "name", label: "الاسم" },
+          { k: "handle", label: "اسم ديسكورد (اختياري)" },
+          { k: "id", label: "الرقم" },
+          { k: "date", label: "تاريخ التعيين", type: "date" },
+          { k: "top", label: "تمييز بالأعلى", type: "bool" } ] } ] },
+      { key: "ranks", label: "صفحة: الرتب والملابس", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "desc", label: "الوصف", type: "textarea" },
+        { k: "items", type: "list", label: "الرتب", item: "رتبة", fields: [
+          { k: "tier", label: "المستوى" },
+          { k: "title", label: "اسم الرتبة" },
+          { k: "desc", label: "الوصف", type: "textarea" },
+          { k: "image", label: "صورة الزي", type: "image" } ] } ] },
+      { key: "uniforms", label: "الرتب والملابس: الملابس", fields: [
+        { k: "groups", type: "list", label: "المجموعات", item: "مجموعة", fields: [
+          { k: "title", label: "عنوان المجموعة" },
+          { k: "desc", label: "الوصف", type: "textarea" },
+          { k: "items", type: "list", label: "الصور", item: "صورة", fields: [
+            { k: "caption", label: "الوصف" },
+            { k: "image", label: "الصورة", type: "image" } ] } ] } ] },
+      { key: "battalions", label: "صفحة: الكتائب", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "desc", label: "الوصف", type: "textarea" },
+        { k: "items", type: "list", label: "الكتائب", item: "كتيبة", fields: [
+          { k: "name", label: "الاسم" },
+          { k: "code", label: "الرمز (يظهر بجانب الاسم)" },
+          { k: "desc", label: "الوصف", type: "textarea" },
+          { k: "cmdName", label: "اسم القائد" },
+          { k: "cmdId", label: "رقم صاحب الأيدي" },
+          { k: "soon", label: "قريبًا (بدون قائد)", type: "bool" } ] } ] },
+      { key: "rules", label: "صفحة: القوانين", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "intro", label: "المقدمة", type: "textarea" },
+        { k: "items", type: "list", label: "الأقسام", item: "قسم", fields: [
+          { k: "title", label: "اسم القسم" },
+          { k: "note", label: "ملاحظة تحت العنوان (اختياري)", type: "textarea" },
+          { k: "rules", type: "list", label: "البنود", item: "بند", fields: [
+            { k: "text", label: "نص البند", type: "textarea" } ] } ] } ] },
+      ...customs,
+      { key: "cta", label: "الصفحة الرئيسية: دعوة الانضمام", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "text", label: "النص", type: "textarea" },
+        { k: "btn", label: "نص الزر" } ] },
+      { key: "faq", label: "الصفحة الرئيسية: الأسئلة الشائعة", fields: [
+        { k: "title", label: "العنوان" },
+        { k: "items", type: "list", label: "الأسئلة", item: "سؤال", fields: [
+          { k: "q", label: "السؤال" },
+          { k: "a", label: "الجواب", type: "textarea" } ] } ] },
+      { key: "footer", label: "التذييل", fields: [
+        { k: "about", label: "وصف مختصر", type: "textarea" },
+        { k: "legal", label: "حقوق النشر" } ] },
+      { key: "visible", label: "إظهار وإخفاء الأقسام الفرعية", fields: [
+        { k: "departments", label: "قسم: الأقسام (داخل عام الوزارة)", type: "bool" },
+        { k: "leadership", label: "قسم: القيادات (داخل عام الوزارة)", type: "bool" },
+        { k: "faq", label: "قسم: الأسئلة الشائعة (الرئيسية)", type: "bool" } ] }
+    ];
   }
 
   function blankItem(fields) {
@@ -1029,7 +1223,8 @@
           const max = 1100;
           const s = Math.min(1, max / Math.max(img.width, img.height));
           const c = document.createElement("canvas");
-          c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+          c.width = Math.round(img.width * s);
+          c.height = Math.round(img.height * s);
           c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
           resolve(c.toDataURL("image/webp", 0.85));
         };
@@ -1046,7 +1241,9 @@
 
     if (f.type === "bool") {
       const lab = el("label", "chk");
-      const cb = el("input"); cb.type = "checkbox"; cb.checked = !!obj[f.k];
+      const cb = el("input");
+      cb.type = "checkbox";
+      cb.checked = !!obj[f.k];
       cb.onchange = () => { obj[f.k] = cb.checked; touch(lbl(obj, f)); };
       lab.append(cb, document.createTextNode(f.label));
       wrap.append(lab);
@@ -1064,16 +1261,22 @@
     if (f.type === "image") {
       const box = el("div", "imgbox");
       const prev = el("div", "media");
-      const img = el("img"); img.alt = "";
+      const img = el("img");
+      img.alt = "";
       img.onerror = () => prev.classList.add("broken");
       prev.append(img);
-      const url = el("input"); url.type = "text"; url.placeholder = "رابط الصورة (https://...)";
+      const url = el("input");
+      url.type = "text";
+      url.placeholder = "رابط الصورة (https://...)";
       url.value = String(obj[f.k] || "").startsWith("data:") ? "" : (obj[f.k] || "");
       const row = el("div", "row");
-      const file = el("input"); file.type = "file"; file.accept = "image/*";
-      const rm = el("button", "btn-sm danger", "إزالة الصورة"); rm.type = "button";
+      const file = el("input");
+      file.type = "file";
+      file.accept = "image/*";
+      const rm = el("button", "btn-sm danger", "إزالة الصورة");
+      rm.type = "button";
       row.append(file, rm);
-      box.append(prev, url, row, el("div", "hint", "يمكنك لصق رابط صورة أو رفع ملف. الملفات المرفوعة تُحفظ داخل المتصفح."));
+      box.append(prev, url, row, el("div", "hint", "يمكنك لصق رابط صورة أو رفع ملف. الملفات المرفوعة تُضغط وتُحفظ مع الموقع."));
 
       const preview = () => {
         const v = obj[f.k] || "";
@@ -1086,10 +1289,14 @@
         const x = file.files[0];
         if (!x) return;
         compressImage(x).then(d => {
-          obj[f.k] = d; url.value = ""; preview(); touch(lbl(obj, f)); flash("تم رفع الصورة");
+          obj[f.k] = d;
+          url.value = "";
+          preview();
+          touch(lbl(obj, f) + " (صورة مرفوعة)");
+          flash("تم رفع الصورة");
         }).catch(() => flash("تعذر قراءة الصورة"));
       };
-      rm.onclick = () => { obj[f.k] = ""; url.value = ""; preview(); touch(lbl(obj, f)); };
+      rm.onclick = () => { obj[f.k] = ""; url.value = ""; preview(); touch(lbl(obj, f) + " (حذف الصورة)"); };
       wrap.append(box);
       return wrap;
     }
@@ -1098,10 +1305,12 @@
     if (f.type === "textarea") {
       ctl = el("textarea");
     } else if (f.type === "select") {
+      if (!obj[f.k]) obj[f.k] = f.options[0][0];
       ctl = el("select");
       f.options.forEach(([v, t]) => { const o = el("option", "", t); o.value = v; ctl.append(o); });
     } else {
-      ctl = el("input"); ctl.type = f.type === "date" ? "date" : "text";
+      ctl = el("input");
+      ctl.type = f.type === "date" ? "date" : "text";
     }
     ctl.value = obj[f.k] ?? "";
     ctl.oninput = ctl.onchange = () => { obj[f.k] = ctl.value; touch(lbl(obj, f)); };
@@ -1117,14 +1326,20 @@
       const headEl = el("div", "lhead");
       headEl.append(el("span", "", `${itemLabel || "عنصر"} ${i + 1}`));
       const acts = el("div", "acts");
-      const up = el("button", "", "↑"); up.title = "تحريك للأعلى"; up.disabled = i === 0;
+      const up = el("button", "", "↑");
+      up.title = "تحريك للأعلى";
+      up.disabled = i === 0;
       up.onclick = () => { [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; change(`تحريك ${itemLabel || "عنصر"} ${i + 1}`); };
-      const down = el("button", "", "↓"); down.title = "تحريك للأسفل"; down.disabled = i === arr.length - 1;
+      const down = el("button", "", "↓");
+      down.title = "تحريك للأسفل";
+      down.disabled = i === arr.length - 1;
       down.onclick = () => { [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; change(`تحريك ${itemLabel || "عنصر"} ${i + 1}`); };
-      const del = el("button", "del", "🗑"); del.title = "حذف";
-      del.onclick = () => { if (confirm("هل تريد حذف هذا العنصر؟")) { arr.splice(i, 1); change(`حذف ${itemLabel || "عنصر"} ${i + 1}`); } };
-      const dup = el("button", "", "⧉"); dup.title = "نسخ";
+      const dup = el("button", "", "⧉");
+      dup.title = "نسخ";
       dup.onclick = () => { arr.splice(i + 1, 0, JSON.parse(JSON.stringify(item))); change(`نسخ ${itemLabel || "عنصر"} ${i + 1}`); };
+      const del = el("button", "del", "🗑");
+      del.title = "حذف";
+      del.onclick = () => { if (confirm("هل تريد حذف هذا العنصر؟")) { arr.splice(i, 1); change(`حذف ${itemLabel || "عنصر"} ${i + 1}`); } };
       acts.append(up, down, dup, del);
       headEl.append(acts);
       card.append(headEl);
@@ -1138,36 +1353,145 @@
     return wrap;
   }
 
-  function showSection(i) {
-    current = i;
-    const s = SCHEMA[i];
-    sectionLabel = s.label;
-    document.querySelectorAll("#ed-nav button").forEach((b, j) => b.classList.toggle("on", j === i));
-    const m = $("ed-main");
-    m.innerHTML = "";
-    m.append(el("h2", "", s.label));
-    const rerender = () => { const y = $("ed-main").scrollTop; showSection(current); $("ed-main").scrollTop = y; };
-    if (s.list) {
-      m.append(listEl(D[s.key], s.fields, rerender, s.item));
-    } else {
-      s.fields.forEach(f => m.append(fieldEl(D[s.key], f, rerender)));
-    }
+  // Manager for section names, order, visibility, and adding new sections
+  function renderNavManager(m, rerender) {
+    m.append(el("p", "hint", "من هنا تتحكم بأسماء الأقسام في القائمة وترتيبها وإظهارها. الأقسام الأساسية لا تُحذف، لكن يمكن إخفاؤها. الأقسام الجديدة تظهر تلقائيًا في القائمة وفي الصفحة الرئيسية."));
+
+    const add = el("button", "add-btn", "+ إضافة قسم جديد");
+    add.type = "button";
+    add.onclick = async () => {
+      const name = await dialog({ title: "قسم جديد", body: "اكتب اسم القسم كما سيظهر في القائمة.", ok: "إضافة", input: true, inputType: "text", placeholder: "مثال: الإدارة العليا" });
+      if (!name) return;
+      const clean = String(name).trim();
+      if (!clean) return;
+      const id = uniqueId(clean);
+      D.nav.push({ id, label: clean, visible: true });
+      D.pages.push({ id, title: clean, desc: "", blocks: [] });
+      touch(`إضافة قسم جديد: ${clean}`);
+      showSection("custom:" + id);
+    };
+    m.append(add);
+
+    D.nav.forEach((n, i) => {
+      const card = el("div", "lcard navrow");
+      const headEl = el("div", "lhead");
+      headEl.append(el("span", "", `${i + 1}. ${n.label}`));
+      const acts = el("div", "acts");
+
+      const up = el("button", "", "↑");
+      up.title = "تحريك للأعلى";
+      up.disabled = i === 0;
+      up.onclick = () => { [D.nav[i - 1], D.nav[i]] = [D.nav[i], D.nav[i - 1]]; touch(`ترتيب القائمة: ${n.label}`); rerender(); };
+
+      const down = el("button", "", "↓");
+      down.title = "تحريك للأسفل";
+      down.disabled = i === D.nav.length - 1;
+      down.onclick = () => { [D.nav[i + 1], D.nav[i]] = [D.nav[i], D.nav[i + 1]]; touch(`ترتيب القائمة: ${n.label}`); rerender(); };
+
+      const open = el("button", "", "تعديل المحتوى");
+      open.onclick = () => showSection(isCustom(n.id) ? "custom:" + n.id : n.id);
+
+      const del = el("button", "del", "🗑");
+      if (isCustom(n.id)) {
+        del.title = "حذف القسم";
+        del.onclick = () => deletePage(n.id);
+      } else {
+        del.disabled = true;
+        del.title = "الأقسام الأساسية لا تُحذف، أخفها فقط";
+      }
+
+      acts.append(up, down, open, del);
+      headEl.append(acts);
+      card.append(headEl);
+
+      const lab = el("div", "fld");
+      lab.append(el("label", "", "اسم القسم في القائمة"));
+      const inp = el("input");
+      inp.type = "text";
+      inp.value = n.label;
+      inp.oninput = () => { n.label = inp.value; touch(`اسم القسم في القائمة: ${n.label}`); refreshNav(); };
+      lab.append(inp);
+
+      const vis = el("label", "chk");
+      const cb = el("input");
+      cb.type = "checkbox";
+      cb.checked = n.visible !== false;
+      cb.onchange = () => { n.visible = cb.checked; touch(`${cb.checked ? "إظهار" : "إخفاء"} القسم: ${n.label}`); };
+      vis.append(cb, document.createTextNode("يظهر هذا القسم في الموقع"));
+
+      card.append(lab, vis);
+      m.append(card);
+    });
+  }
+
+  function deletePage(id) {
+    const n = navItem(id);
+    const label = n ? n.label : id;
+    if (!confirm(`حذف القسم "${label}" نهائيًا؟`)) return;
+    D.nav = D.nav.filter(x => x.id !== id);
+    D.pages = D.pages.filter(p => p.id !== id);
+    touch(`حذف القسم: ${label}`);
+    showSection("pages");
+  }
+
+  function refreshNav() {
+    const nav = $("ed-nav");
+    if (!nav) return;
+    const items = schema();
+    const btns = nav.querySelectorAll("button");
+    if (btns.length !== items.length) { buildNav(); return; }
+    items.forEach((s, i) => { btns[i].textContent = s.label; btns[i].dataset.key = s.key; btns[i].classList.toggle("on", s.key === currentKey); });
   }
 
   function buildNav() {
     const nav = $("ed-nav");
     nav.innerHTML = "";
-    SCHEMA.forEach((s, i) => {
+    schema().forEach(s => {
       const b = el("button", "", s.label);
-      b.onclick = () => showSection(i);
+      b.dataset.key = s.key;
+      b.classList.toggle("on", s.key === currentKey);
+      b.onclick = () => showSection(s.key);
       nav.append(b);
     });
   }
 
-  function openEditor() {
+  function showSection(key) {
+    const items = schema();
+    const s = items.find(x => x.key === key) || items[0];
+    currentKey = s.key;
+    sectionLabel = s.label;
     buildNav();
+
+    const m = $("ed-main");
+    m.innerHTML = "";
+    m.append(el("h2", "", s.label));
+
+    const tools = el("div", "sec-tools");
+    const target = pageTarget(s.key);
+    const view = el("button", "btn-sm", target === "home" ? "عرض الصفحة الرئيسية" : "عرض هذه الصفحة في الموقع");
+    view.onclick = () => {
+      $("editor").hidden = true;
+      location.hash = target === "home" ? "#/" : "#/" + target;
+    };
+    tools.append(view);
+    if (s.custom_page) {
+      const del = el("button", "btn-sm danger", "حذف هذا القسم");
+      del.onclick = () => deletePage(s.custom_page);
+      tools.append(del);
+    }
+    m.append(tools);
+
+    const rerender = () => { const y = $("ed-main").scrollTop; showSection(currentKey); $("ed-main").scrollTop = y; };
+    if (s.custom) { s.custom(m, rerender); return; }
+    if (s.list) { m.append(listEl(s.get ? s.get() : D[s.key], s.fields, rerender, s.item)); return; }
+    const obj = s.get ? s.get() : D[s.key];
+    s.fields.forEach(f => m.append(fieldEl(obj, f, rerender)));
+  }
+
+  function openEditor() {
     $("editor").hidden = false;
-    showSection(current);
+    showSection(currentKey);
+    updateBar();
   }
   function closeEditor() { $("editor").hidden = true; renderAll(); }
 
@@ -1180,21 +1504,29 @@
     const a = el("a");
     a.href = URL.createObjectURL(blob);
     a.download = "valley-ministry-of-health.html";
-    document.body.append(a); a.click(); a.remove();
+    document.body.append(a);
+    a.click();
+    a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    flash("تم تنزيل الملف المحدث");
+    flash("تم تنزيل نسخة احتياطية");
   }
 
   // ---------- Events ----------
   document.addEventListener("click", e => {
     const z = e.target.closest("[data-zoom-src]");
     if (z) { openLB(z.dataset.zoomSrc, ""); return; }
-    if (e.target.closest("[data-action='login']")) openLogin();
+    if (e.target.closest("[data-action='login']")) { openLogin(); return; }
     if (e.target.closest("#hdr-admin")) { if (isAdmin()) openEditor(); }
   });
+
   document.addEventListener("keydown", e => {
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-zoom-src]")) {
-      e.preventDefault(); openLB(e.target.dataset.zoomSrc, "");
+      e.preventDefault();
+      openLB(e.target.dataset.zoomSrc, "");
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !$("editor").hidden && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
+      e.preventDefault();
+      undo();
     }
     if (e.key === "Escape") {
       if (!$("lightbox").hidden) closeLB();
@@ -1204,25 +1536,30 @@
     if (e.key === "Enter" && e.target.id === "code") tryLogin();
   });
 
+  window.addEventListener("hashchange", () => applyRoute(true));
+
   $("lb-close").onclick = closeLB;
   $("lightbox").addEventListener("click", e => { if (e.target.id === "lightbox") closeLB(); });
   $("loginGo").onclick = tryLogin;
   $("loginCancel").onclick = closeLogin;
   $("login").addEventListener("click", e => { if (e.target.id === "login") closeLogin(); });
 
+  $("confirmBtn").onclick = confirmFlow;
+  $("floatConfirm").onclick = confirmFlow;
+  $("undoBtn").onclick = undo;
+  $("exportBtn").onclick = exportSite;
+  $("viewBtn").onclick = () => { $("editor").hidden = true; renderAll(); };
   $("logoutBtn").onclick = () => {
     sessionStorage.removeItem("moh-admin");
     sessionStorage.removeItem("moh-code");
     closeEditor();
   };
-  $("viewBtn").onclick = () => { $("editor").hidden = true; renderAll(); };
-  $("exportBtn").onclick = exportSite;
   $("resetBtn").onclick = () => {
-    if (!confirm("سيتم حذف جميع التعديلات والعودة إلى المحتوى الأصلي. متابعة؟")) return;
-    D = JSON.parse(JSON.stringify(EMBED));
+    if (!confirm("سيتم إعادة الموقع إلى المحتوى الأصلي كتعديل يحتاج تأكيدًا. متابعة؟")) return;
+    D = clone(EMBED);
     touch("إعادة ضبط كاملة للموقع");
     renderAll();
-    showSection(current);
+    showSection(currentKey);
     flash("تمت إعادة الضبط، اضغط تأكيد التعديلات لنشرها");
   };
 
@@ -1232,14 +1569,21 @@
     $("menuBtn").setAttribute("aria-expanded", open);
   };
   $("mainnav").addEventListener("click", e => {
-    if (e.target.tagName === "A") { $("mainnav").classList.remove("open"); $("menuBtn").setAttribute("aria-expanded", "false"); }
+    if (e.target.tagName === "A") {
+      $("mainnav").classList.remove("open");
+      $("menuBtn").setAttribute("aria-expanded", "false");
+    }
   });
 
+  // ---------- Start ----------
+  loadDraft();
+  lastState = JSON.stringify(D);
   renderAll();
   if (isHosted) {
     fetch(API).then(r => (r.ok ? r.json() : null)).then(remote => {
-      if (remote && remote.site) D = remote;
-      if (isAdmin()) { try { const dft = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); if (dft && dft.site) D = dft; } catch (e) {} }
+      if (remote && remote.site) D = normalize(remote);
+      loadDraft();
+      lastState = JSON.stringify(D);
       renderAll();
     }).catch(() => {});
   }
