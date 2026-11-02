@@ -905,11 +905,17 @@
     return f.label + (n ? " (" + String(n).slice(0, 40) + ")" : "");
   }
 
-  function touch(label) {
+  function touch(label, from, to) {
     if (pendingBase === null) pendingBase = { state: lastState, n: changes.length };
     const text = (sectionLabel ? sectionLabel + " ← " : "") + (label || "تعديل");
     const last = changes[changes.length - 1];
-    if (!last || last.text !== text) changes.push({ text });
+    if (last && last.text === text && last.from !== undefined && from !== undefined) {
+      last.to = to;
+    } else {
+      const entry = { text };
+      if (from !== undefined) { entry.from = from; entry.to = to; }
+      changes.push(entry);
+    }
     clearTimeout(timer);
     timer = setTimeout(() => { saveDraft(); renderAll(); }, 250);
   }
@@ -1001,16 +1007,38 @@
     if (!r.ok) throw new Error(String(r.status));
   }
 
-  function showSuccess(list) {
-    const text = "تم تحديث موقع وزارة الصحة في مدينة فالي، وهذي هي جميع التعديلات:\n\n" +
-      list.map((c, i) => `${i + 1}. ${c.text}`).join("\n");
+  function fmtVal(v) {
+    if (typeof v === "boolean") return v ? "مفعّل" : "معطّل";
+    if (v === undefined || v === null || String(v).trim() === "") return "فارغ";
+    if (String(v).startsWith("data:")) return "صورة";
+    const s = String(v).replace(/\s+/g, " ").trim();
+    return s.length > 300 ? s.slice(0, 300) + "…" : s;
+  }
+
+  function stamp(date) {
+    const hd = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Riyadh" }).format(date);
+    const gd = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Riyadh" }).format(date);
+    const tm = new Intl.DateTimeFormat("ar-SA", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Riyadh" }).format(date);
+    return `التاريخ: ${hd} هـ | ${gd} م\nالساعة: ${tm} بتوقيت مكة المكرمة`;
+  }
+
+  function changeLine(c, i) {
+    if (c.from === undefined) return `${i + 1}. ${c.text}`;
+    return `${i + 1}. ${c.text} ← المحتوى القديم ← ${fmtVal(c.from)} ← النص الجديد ← ${fmtVal(c.to)}`;
+  }
+
+  function showSuccess(list, date) {
+    const items = list.filter(c => c.from === undefined || fmtVal(c.from) !== fmtVal(c.to));
+    const body = items.length ? items.map(changeLine).join("\n") : "لا توجد تغييرات فعلية.";
+    const text = stamp(date) + "\n\nتم تحديث موقع وزارة الصحة في مدينة فالي، وهذي هي جميع التعديلات:\n\n" + body;
     const wrap = el("div", "overlay dlg");
     const card = el("div", "login-card");
-    card.style.width = "min(560px, 100%)";
+    card.style.width = "min(600px, 100%)";
     card.append(el("h3", "", "تهنينا! تم تحديث الموقع"), el("p", "", "يمكنك نسخ الرسالة التالية وإرسالها:"));
     const ta = el("textarea", "copybox");
     ta.value = text;
     ta.readOnly = true;
+    ta.style.minHeight = "340px";
     const row = el("div", "btns");
     row.style.marginTop = "14px";
     const copy = el("button", "btn btn-green", "نسخ الرسالة");
@@ -1053,7 +1081,7 @@
     sessionStorage.removeItem(CHANGES_KEY);
     localStorage.removeItem(DRAFT_KEY);
     updateBar();
-    showSuccess(list);
+    showSuccess(list, new Date());
   }
 
   function flash(msg) {
@@ -1244,7 +1272,7 @@
       const cb = el("input");
       cb.type = "checkbox";
       cb.checked = !!obj[f.k];
-      cb.onchange = () => { obj[f.k] = cb.checked; touch(lbl(obj, f)); };
+      cb.onchange = () => { const from = !cb.checked; obj[f.k] = cb.checked; touch(lbl(obj, f), from, cb.checked); };
       lab.append(cb, document.createTextNode(f.label));
       wrap.append(lab);
       return wrap;
@@ -1284,19 +1312,20 @@
         img.src = v;
       };
       preview();
-      url.oninput = () => { obj[f.k] = url.value.trim(); preview(); touch(lbl(obj, f)); };
+      url.oninput = () => { const from = obj[f.k] ? "صورة" : "فارغ"; obj[f.k] = url.value.trim(); preview(); touch(lbl(obj, f), from, url.value.trim() ? "رابط صورة جديد" : "فارغ"); };
       file.onchange = () => {
         const x = file.files[0];
         if (!x) return;
+        const had = obj[f.k];
         compressImage(x).then(d => {
           obj[f.k] = d;
           url.value = "";
           preview();
-          touch(lbl(obj, f) + " (صورة مرفوعة)");
+          touch(lbl(obj, f), had ? "صورة قديمة" : "فارغ", "صورة جديدة (مرفوعة)");
           flash("تم رفع الصورة");
         }).catch(() => flash("تعذر قراءة الصورة"));
       };
-      rm.onclick = () => { obj[f.k] = ""; url.value = ""; preview(); touch(lbl(obj, f) + " (حذف الصورة)"); };
+      rm.onclick = () => { const from = obj[f.k] ? "صورة" : "فارغ"; obj[f.k] = ""; url.value = ""; preview(); touch(lbl(obj, f), from, "فارغ"); };
       wrap.append(box);
       return wrap;
     }
@@ -1313,7 +1342,8 @@
       ctl.type = f.type === "date" ? "date" : "text";
     }
     ctl.value = obj[f.k] ?? "";
-    ctl.oninput = ctl.onchange = () => { obj[f.k] = ctl.value; touch(lbl(obj, f)); };
+    let prevV = obj[f.k] ?? "";
+    ctl.oninput = ctl.onchange = () => { const from = prevV; obj[f.k] = ctl.value; touch(lbl(obj, f), from, ctl.value); prevV = ctl.value; };
     wrap.append(ctl);
     return wrap;
   }
@@ -1409,7 +1439,8 @@
       const inp = el("input");
       inp.type = "text";
       inp.value = n.label;
-      inp.oninput = () => { n.label = inp.value; touch(`اسم القسم في القائمة: ${n.label}`); refreshNav(); };
+      let prevL = n.label;
+      inp.oninput = () => { const from = prevL; n.label = inp.value; touch("اسم القسم في القائمة", from, inp.value); prevL = inp.value; refreshNav(); };
       lab.append(inp);
 
       const vis = el("label", "chk");
